@@ -1,130 +1,695 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rock, Paper, Scissors</title>
-  <style>
-    body {
-      background-color: #121212;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 20px;
-      margin: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors - Epic Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    h1 {
-      color: #ffcc00;
-      font-size: 6vw;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, hsl(220, 25%, 6%), hsl(220, 30%, 10%));
+            color: hsl(210, 40%, 98%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    .choices {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 30px 0;
-    }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            gap: 32px;
+        }
 
-    .choices button {
-      font-size: 6vw;
-      padding: 15px 25px;
-      min-width: 30vw;
-      cursor: pointer;
-      background-color: #333;
-      color: #fff;
-      border: 1px solid #555;
-      border-radius: 10px;
-      transition: background-color 0.2s ease-in-out;
-    }
+        .title-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
 
-    .choices button:hover {
-      background-color: #444;
-    }
+        .title {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(280, 100%, 60%), hsl(280, 100%, 70%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px currentColor;
+            animation: float 3s ease-in-out infinite;
+            margin-bottom: 16px;
+        }
 
-    #result {
-      margin-top: 20px;
-      font-size: 5vw;
-      font-weight: bold;
-    }
+        .subtitle {
+            font-size: 1.25rem;
+            color: hsl(210, 20%, 65%);
+        }
 
-    .scoreboard {
-      margin-top: 30px;
-      font-size: 4.5vw;
-    }
+        .score-display {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            min-width: 400px;
+        }
 
-    @media (min-width: 768px) {
-      h1 {
-        font-size: 40px;
-      }
+        .score-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+        }
 
-      .choices button {
-        font-size: 24px;
-        min-width: 100px;
-      }
+        .score-item {
+            text-align: center;
+        }
 
-      .scoreboard {
-        font-size: 20px;
-      }
+        .score-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: hsl(210, 20%, 65%);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
 
-      #result {
-        font-size: 24px;
-      }
-    }
-  </style>
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .player-score {
+            background: linear-gradient(135deg, hsl(280, 100%, 60%), hsl(280, 100%, 70%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .computer-score {
+            background: linear-gradient(135deg, hsl(320, 100%, 60%), hsl(320, 100%, 70%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .round-score {
+            font-size: 1.5rem;
+            color: hsl(210, 40%, 98%);
+        }
+
+        .game-arena {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .choice-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .choice-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(210, 20%, 65%);
+            margin-bottom: 16px;
+        }
+
+        .game-hand {
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            padding: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            cursor: pointer;
+            display: inline-block;
+            margin: 8px;
+        }
+
+        .game-hand:hover {
+            transform: scale(1.1);
+            border-color: hsl(280, 100%, 60%, 0.5);
+            box-shadow: 0 0 30px hsl(280, 100%, 60%, 0.3), 0 8px 32px rgba(31, 38, 135, 0.37);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .game-hand:active {
+            transform: scale(0.95);
+        }
+
+        .game-hand.selected {
+            border-color: hsl(280, 100%, 60%);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px hsl(280, 100%, 60%, 0.3), 0 8px 32px rgba(31, 38, 135, 0.37);
+            background: linear-gradient(135deg, hsl(280, 100%, 60%), hsl(280, 100%, 70%));
+        }
+
+        .game-hand.winner {
+            border-color: hsl(120, 60%, 50%);
+            transform: scale(1.25);
+            box-shadow: 0 0 30px hsl(120, 60%, 50%, 0.3), 0 8px 32px rgba(31, 38, 135, 0.37);
+            animation: winner-pulse 1s ease-in-out infinite alternate;
+        }
+
+        .hand-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hand-emoji {
+            font-size: 4rem;
+            transition: transform 0.3s ease;
+        }
+
+        .hand-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .single-choice {
+            display: flex;
+            justify-content: center;
+        }
+
+        .vs-divider {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(320, 100%, 60%), hsl(320, 100%, 70%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px currentColor;
+            margin: 32px 0;
+        }
+
+        .result-section {
+            text-align: center;
+            margin: 32px 0;
+            animation: reveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .result-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px currentColor;
+            margin-bottom: 8px;
+        }
+
+        .result-subtitle {
+            font-size: 1.125rem;
+            color: hsl(210, 20%, 65%);
+            margin-bottom: 24px;
+        }
+
+        .result-win {
+            color: hsl(120, 60%, 50%);
+        }
+
+        .result-lose {
+            color: hsl(0, 84%, 60%);
+        }
+
+        .result-tie {
+            color: hsl(45, 100%, 60%);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, hsl(280, 100%, 60%), hsl(280, 100%, 70%));
+            color: white;
+            border: 2px solid hsl(280, 100%, 60%, 0.5);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px hsl(280, 100%, 60%, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, hsl(200, 100%, 50%), hsl(200, 100%, 60%));
+            border-color: hsl(200, 100%, 50%, 0.5);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 0 20px hsl(200, 100%, 50%, 0.3);
+        }
+
+        .thinking-hand {
+            animation: spin 1s linear infinite;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slide-in 0.3s ease-out;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes winner-pulse {
+            0% { box-shadow: 0 0 30px hsl(120, 60%, 50%, 0.3), 0 8px 32px rgba(31, 38, 135, 0.37); }
+            100% { box-shadow: 0 0 50px hsl(120, 60%, 50%, 0.6), 0 8px 32px rgba(31, 38, 135, 0.37); }
+        }
+
+        @keyframes reveal {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotateY(180deg);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1) rotateY(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+            20%, 40%, 60%, 80% { transform: translateX(2px); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .choices-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .game-hand {
+                padding: 24px;
+            }
+            
+            .hand-emoji {
+                font-size: 3rem;
+            }
+            
+            .score-container {
+                gap: 16px;
+            }
+            
+            .score-display {
+                min-width: auto;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="title">Rock Paper Scissors</h1>
+            <p class="subtitle">Choose your weapon and battle the computer!</p>
+        </div>
 
-  <h1> You vs Computer </h1>
-  <p>Choose your move:</p>
+        <!-- Score Board -->
+        <div class="score-display">
+            <div class="score-container">
+                <div class="score-item">
+                    <div class="score-label">You</div>
+                    <div class="score-value player-score" id="playerScore">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Round</div>
+                    <div class="score-value round-score" id="rounds">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">CPU</div>
+                    <div class="score-value computer-score" id="computerScore">0</div>
+                </div>
+            </div>
+        </div>
 
-  <div class="choices">
-    <button onclick="play('rock')"> Rock</button>
-    <button onclick="play('paper')"> Paper</button>
-    <button onclick="play('scissors')"> Scissors</button>
-  </div>
+        <!-- Game Arena -->
+        <div class="game-arena">
+            <!-- Computer Choice -->
+            <div class="choice-section">
+                <h3 class="choice-title">Computer's Choice</h3>
+                <div class="single-choice">
+                    <div class="game-hand" id="computerHand">
+                        <div class="hand-content">
+                            <div class="hand-emoji" id="computerEmoji">❓</div>
+                            <span class="hand-label" id="computerLabel">Thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <div id="result"></div>
+            <!-- Game Result -->
+            <div class="result-section" id="resultSection" style="display: none;">
+                <h2 class="result-title" id="resultTitle"></h2>
+                <p class="result-subtitle" id="resultSubtitle"></p>
+                <button class="btn" onclick="resetRound()">Play Again</button>
+            </div>
 
-  <div class="scoreboard">
-    <p>Your Score: <span id="playerScore">0</span></p>
-    <p>Computer Score: <span id="computerScore">0</span></p>
-  </div>
+            <!-- VS Divider -->
+            <div class="vs-divider">VS</div>
 
-  <audio id="winSound" src="https://www.soundjay.com/button/sounds/button-3.mp3" preload="auto"></audio>
-  <audio id="loseSound" src="https://www.soundjay.com/button/sounds/button-10.mp3" preload="auto"></audio>
+            <!-- Player Choice -->
+            <div class="choice-section">
+                <h3 class="choice-title">Your Choice</h3>
+                <div id="playerChoices">
+                    <div class="choices-grid">
+                        <div class="game-hand" onclick="playRound('rock')">
+                            <div class="hand-content">
+                                <div class="hand-emoji">🪨</div>
+                                <span class="hand-label">Rock</span>
+                            </div>
+                        </div>
+                        <div class="game-hand" onclick="playRound('paper')">
+                            <div class="hand-content">
+                                <div class="hand-emoji">📄</div>
+                                <span class="hand-label">Paper</span>
+                            </div>
+                        </div>
+                        <div class="game-hand" onclick="playRound('scissors')">
+                            <div class="hand-content">
+                                <div class="hand-emoji">✂️</div>
+                                <span class="hand-label">Scissors</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <script>
-    let playerScore = 0;
-    let computerScore = 0;
+        <!-- New Game Button -->
+        <button class="btn btn-secondary" onclick="resetGame()">New Game</button>
+    </div>
 
-    function play(playerChoice) {
-      const choices = ['rock', 'paper', 'scissors'];
-      const computerChoice = choices[Math.floor(Math.random() * 3)];
-      let resultText = `You chose ${playerChoice}. Computer chose ${computerChoice}. `;
+    <script>
+        // Game state
+        let gameState = 'selecting'; // 'selecting', 'revealing', 'result'
+        let playerChoice = null;
+        let computerChoice = null;
+        let playerScore = 0;
+        let computerScore = 0;
+        let rounds = 0;
+        let result = null;
 
-      if (playerChoice === computerChoice) {
-        resultText += "It's a draw!";
-      } else if (
-        (playerChoice === 'rock' && computerChoice === 'scissors') ||
-        (playerChoice === 'paper' && computerChoice === 'rock') ||
-        (playerChoice === 'scissors' && computerChoice === 'paper')
-      ) {
-        resultText += "You win! 🎉";
-        playerScore++;
-        document.getElementById('winSound').play();
-      } else {
-        resultText += "You lose! ";
-        computerScore++;
-        document.getElementById('loseSound').play();
-      }
+        const hands = ['rock', 'paper', 'scissors'];
+        const handEmojis = {
+            rock: '🪨',
+            paper: '📄',
+            scissors: '✂️'
+        };
+        const handLabels = {
+            rock: 'Rock',
+            paper: 'Paper',
+            scissors: 'Scissors'
+        };
 
-      document.getElementById('result').textContent = resultText;
-      document.getElementById('playerScore').textContent = playerScore;
-      document.getElementById('computerScore').textContent = computerScore;
-    }
-  </script>
+        const resultMessages = {
+            win: {
+                title: '🎉 You Win!',
+                subtitle: 'Amazing choice!',
+                class: 'result-win'
+            },
+            lose: {
+                title: '💥 You Lose!',
+                subtitle: 'Better luck next time!',
+                class: 'result-lose'
+            },
+            tie: {
+                title: '🤝 It\'s a Tie!',
+                subtitle: 'Great minds think alike!',
+                class: 'result-tie'
+            }
+        };
 
+        function getRandomChoice() {
+            return hands[Math.floor(Math.random() * hands.length)];
+        }
+
+        function determineWinner(player, computer) {
+            if (player === computer) return 'tie';
+            
+            const winConditions = {
+                rock: 'scissors',
+                paper: 'rock',
+                scissors: 'paper'
+            };
+            
+            return winConditions[player] === computer ? 'win' : 'lose';
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function updateScores() {
+            document.getElementById('playerScore').textContent = playerScore;
+            document.getElementById('computerScore').textContent = computerScore;
+            document.getElementById('rounds').textContent = rounds;
+        }
+
+        function showPlayerChoice(choice) {
+            document.getElementById('playerChoices').innerHTML = `
+                <div class="single-choice">
+                    <div class="game-hand selected">
+                        <div class="hand-content">
+                            <div class="hand-emoji">${handEmojis[choice]}</div>
+                            <span class="hand-label">${handLabels[choice]}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showComputerChoice(choice, isWinner = false) {
+            const computerHand = document.getElementById('computerHand');
+            const computerEmoji = document.getElementById('computerEmoji');
+            const computerLabel = document.getElementById('computerLabel');
+            
+            computerEmoji.textContent = handEmojis[choice];
+            computerLabel.textContent = handLabels[choice];
+            
+            if (isWinner) {
+                computerHand.classList.add('winner');
+            } else {
+                computerHand.classList.remove('winner');
+            }
+        }
+
+        function showResult(gameResult) {
+            const resultSection = document.getElementById('resultSection');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultSubtitle = document.getElementById('resultSubtitle');
+            
+            const message = resultMessages[gameResult];
+            resultTitle.textContent = message.title;
+            resultTitle.className = `result-title ${message.class}`;
+            resultSubtitle.textContent = message.subtitle;
+            
+            resultSection.style.display = 'block';
+        }
+
+        function resetComputerHand() {
+            const computerHand = document.getElementById('computerHand');
+            const computerEmoji = document.getElementById('computerEmoji');
+            const computerLabel = document.getElementById('computerLabel');
+            
+            computerHand.classList.remove('winner');
+            computerEmoji.textContent = '❓';
+            computerLabel.textContent = 'Thinking...';
+        }
+
+        function resetPlayerChoices() {
+            document.getElementById('playerChoices').innerHTML = `
+                <div class="choices-grid">
+                    <div class="game-hand" onclick="playRound('rock')">
+                        <div class="hand-content">
+                            <div class="hand-emoji">🪨</div>
+                            <span class="hand-label">Rock</span>
+                        </div>
+                    </div>
+                    <div class="game-hand" onclick="playRound('paper')">
+                        <div class="hand-content">
+                            <div class="hand-emoji">📄</div>
+                            <span class="hand-label">Paper</span>
+                        </div>
+                    </div>
+                    <div class="game-hand" onclick="playRound('scissors')">
+                        <div class="hand-content">
+                            <div class="hand-emoji">✂️</div>
+                            <span class="hand-label">Scissors</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function playRound(choice) {
+            if (gameState !== 'selecting') return;
+
+            playerChoice = choice;
+            gameState = 'revealing';
+
+            // Show player choice
+            showPlayerChoice(choice);
+
+            // Add thinking animation to computer
+            document.getElementById('computerEmoji').classList.add('thinking-hand');
+
+            // Wait for suspense
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Generate and show computer choice
+            computerChoice = getRandomChoice();
+            document.getElementById('computerEmoji').classList.remove('thinking-hand');
+            
+            // Add shake animation
+            document.getElementById('computerEmoji').classList.add('shake-animation');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            document.getElementById('computerEmoji').classList.remove('shake-animation');
+
+            // Determine winner
+            result = determineWinner(choice, computerChoice);
+            
+            // Show choices with winner highlighting
+            showComputerChoice(computerChoice, result === 'lose');
+            
+            if (result === 'win') {
+                document.querySelector('#playerChoices .game-hand').classList.add('winner');
+            }
+
+            // Update game state
+            gameState = 'result';
+            rounds++;
+
+            // Update scores
+            if (result === 'win') {
+                playerScore++;
+                showToast('You won this round! 🎉');
+            } else if (result === 'lose') {
+                computerScore++;
+                showToast('Computer wins this round! 💥');
+            } else {
+                showToast('It\'s a tie! 🤝');
+            }
+
+            updateScores();
+
+            // Show result
+            await new Promise(resolve => setTimeout(resolve, 500));
+            showResult(result);
+
+            // Auto-reset after 3 seconds
+            setTimeout(() => {
+                resetRound();
+            }, 3000);
+        }
+
+        function resetRound() {
+            playerChoice = null;
+            computerChoice = null;
+            gameState = 'selecting';
+            result = null;
+
+            // Hide result section
+            document.getElementById('resultSection').style.display = 'none';
+
+            // Reset computer hand
+            resetComputerHand();
+
+            // Reset player choices
+            resetPlayerChoices();
+        }
+
+        function resetGame() {
+            resetRound();
+            playerScore = 0;
+            computerScore = 0;
+            rounds = 0;
+            updateScores();
+            showToast('New game started! 🎮');
+        }
+
+        // Initialize the game
+        updateScores();
+    </script>
 </body>
 </html>
